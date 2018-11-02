@@ -1,0 +1,11 @@
+name: EllirionUtil
+version: ${project.version}
+main: com.ellirion.util.EllirionUtil
+load: STARTUP
+loadbefore: [EllirionCore, EllirionBuildFramework]
+authors: [Ellirion]
+description: Collection of Ellirion Utilities
+commands:
+  setblocktostone:
+    description: Set block to stone.
+    usage: /setblocktostone
