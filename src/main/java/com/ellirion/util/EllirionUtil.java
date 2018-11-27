@@ -30,14 +30,11 @@ public final class EllirionUtil extends JavaPlugin {
     }
 
     /**
-     * Set a block in the world.
-     * @param loc the location of the block to set.
-     * @param mat the material to set the block to.
-     * @param meta the metadate to set on the block.
-     * @param nbt the NBT data to set on the block.
+     * Loads a chunk.
+     * @param loc the location of the chunk to load.
      */
-    public void setBlock(Location loc, Material mat, byte meta, NBTTagCompound nbt) {
-        WorldHelper.setBlock(loc, mat, meta, nbt);
+    public void loadChunk(Location loc) {
+        WorldHelper.getBlock(loc);
     }
 
     /**
