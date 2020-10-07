@@ -1,7 +1,7 @@
 package com.ellirion.util.model;
 
 import lombok.Getter;
-import net.minecraft.server.v1_12_R1.Position;
+import net.minecraft.server.v1_8_R3.Position;
 import org.bukkit.Location;
 import org.bukkit.World;
 

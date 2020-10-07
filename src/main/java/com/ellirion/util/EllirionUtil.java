@@ -1,9 +1,6 @@
 package com.ellirion.util;
 
-import net.minecraft.server.v1_12_R1.NBTTagCompound;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.plugin.java.JavaPlugin;
 import com.ellirion.util.async.Promise;
 import com.ellirion.util.test.SetBlockCommand;
@@ -36,9 +33,11 @@ public final class EllirionUtil extends JavaPlugin {
      * @param meta the metadate to set on the block.
      * @param nbt the NBT data to set on the block.
      */
-    public void setBlock(Location loc, Material mat, byte meta, NBTTagCompound nbt) {
+    /*public void setBlock(Location loc, Material mat, byte meta, NBTTagCompound nbt) {
         WorldHelper.setBlock(loc, mat, meta, nbt);
     }
+
+     */
 
     /**
      * Schedule promise for execution.
