@@ -1,8 +1,9 @@
 package com.ellirion.util;
 
-import net.minecraft.server.v1_8_R3.MinecraftServer;
-import net.minecraft.server.v1_8_R3.NBTTagCompound;
-import net.minecraft.server.v1_8_R3.TileEntity;
+
+import net.minecraft.server.v1_16_R2.MinecraftServer;
+import net.minecraft.server.v1_16_R2.NBTTagCompound;
+import net.minecraft.server.v1_16_R2.TileEntity;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -12,7 +13,8 @@ import org.bukkit.block.BlockFace;
 
 import com.ellirion.util.async.Promise;
 import com.ellirion.util.transact.Transaction;
-import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.craftbukkit.v1_16_R2.CraftWorld;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -96,7 +98,7 @@ public class WorldHelper {
 
         if (!world.isChunkLoaded(chunkX, chunkZ) &&
             (MinecraftServer.getServer() == null || Thread.currentThread() !=
-                                                    MinecraftServer.getServer().primaryThread)) {
+                                                    MinecraftServer.getServer().serverThread)) {
             Promise p = new Promise<>(finisher -> {
                 world.loadChunk(chunkX, chunkZ);
                 markChunkActive(world.getChunkAt(chunkX, chunkZ));
@@ -240,7 +242,7 @@ public class WorldHelper {
 
             // Apply the changes we were supposed to make.
             block.setType(material);
-            block.setData(data);
+            block.setBlockData(data);
 
             if (nbt != null) {
                 TileEntity te2 = ((CraftWorld) location.getWorld()).getTileEntityAt(location.getBlockX(),
