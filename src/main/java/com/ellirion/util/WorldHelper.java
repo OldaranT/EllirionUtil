@@ -241,18 +241,21 @@ public class WorldHelper {
                 ntc.setInt("z", location.getBlockZ());
                 change = new BlockChange(location, block.getType(), block.getBlockData(), ntc);
 
-                // Load empty NBT data into the block, TODO is this necessary?
+                // Load empty NBT data into the block, prevents items from spilling on to the ground if the result of
+                // the BlockChange is not a tile entity
                 te.load(null, new NBTTagCompound());
             } else {
                 change = new BlockChange(location, block.getType(), block.getBlockData());
             }
 
             // Apply the changes we were supposed to make.
+            // Set Material and BlockData
             block.setType(material);
             if (data != null) {
                 block.setBlockData(data);
             }
 
+            // Load NBT data
             if (nbt != null) {
                 TileEntity te2 = ((CraftWorld) location.getWorld()).getHandle()
                         .getTileEntity(new BlockPosition(location.getBlockX(), location.getBlockY(), location.getBlockZ()));
