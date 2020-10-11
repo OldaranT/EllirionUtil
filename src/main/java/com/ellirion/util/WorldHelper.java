@@ -1,6 +1,7 @@
 package com.ellirion.util;
 
 
+import net.minecraft.server.v1_16_R2.BlockPosition;
 import net.minecraft.server.v1_16_R2.MinecraftServer;
 import net.minecraft.server.v1_16_R2.NBTTagCompound;
 import net.minecraft.server.v1_16_R2.TileEntity;
@@ -34,10 +35,10 @@ public class WorldHelper {
      * @param y The Y coordinate of the block
      * @param z The Z coordinate of the block
      * @param mat The Material of the block
-     * @param meta The metadata of the block
+     * @param meta The BlockData of the block
      * @return A {@link BlockChangeTransaction} that has been applied
      */
-    public static Transaction setBlock(World world, int x, int y, int z, Material mat, byte meta) {
+    public static Transaction setBlock(World world, int x, int y, int z, Material mat, BlockData meta) {
         return setBlock(new Location(world, x, y, z), mat, meta);
     }
 
@@ -45,10 +46,10 @@ public class WorldHelper {
      * Safely set a block in the world at the given location to the given material and metadata.
      * @param loc The Location of the block
      * @param mat The Material of the block
-     * @param meta The metadata of the block
+     * @param meta The BlockData of the block
      * @return A {@link BlockChangeTransaction} that has been applied
      */
-    public static Transaction setBlock(Location loc, Material mat, byte meta) {
+    public static Transaction setBlock(Location loc, Material mat, BlockData meta) {
         Transaction t = new BlockChangeTransaction(new BlockChange(loc, mat, meta));
         t.apply();
         return t;
@@ -58,11 +59,11 @@ public class WorldHelper {
      * Safely set a block in the world at the given location to the given material, metadata and nbtdata.
      * @param loc The Location of the block
      * @param mat The Material of the block
-     * @param data The metadata of the block
+     * @param data The BlockData of the block
      * @param nbt The nbtdata of the block
      * @return A {@link BlockChangeTransaction} that has been applied
      */
-    public static Transaction setBlock(Location loc, Material mat, byte data, NBTTagCompound nbt) {
+    public static Transaction setBlock(Location loc, Material mat, BlockData data, NBTTagCompound nbt) {
         Transaction t = new BlockChangeTransaction(new BlockChange(loc, mat, data, nbt));
         t.apply();
         return t;
@@ -75,11 +76,11 @@ public class WorldHelper {
      * @param y The Y coordinate of the block
      * @param z The Z coordinate of the block
      * @param mat The Material of the block
-     * @param meta The metadata of the block
+     * @param meta The BlockData of the block
      * @param nbt The nbtdata of the Block
      * @return A {@link BlockChangeTransaction} that has been applied
      */
-    public static Transaction setBlock(World world, int x, int y, int z, Material mat, byte meta, NBTTagCompound nbt) {
+    public static Transaction setBlock(World world, int x, int y, int z, Material mat, BlockData meta, NBTTagCompound nbt) {
         return setBlock(new Location(world, x, y, z), mat, meta, nbt);
     }
 
@@ -207,49 +208,57 @@ public class WorldHelper {
 
         private Location location;
         private Material material;
-        private byte data;
+        private BlockData data;
         private NBTTagCompound nbt;
 
-        BlockChange(final Location loc, final Material mat, final byte data) {
+        BlockChange(final Location loc, final Material mat, final BlockData data) {
             this(loc, mat, data, null);
         }
 
-        BlockChange(final Location loc, final Material mat, final byte data, final NBTTagCompound nbt) {
+        BlockChange(final Location loc, final Material mat, final BlockData data, final NBTTagCompound nbt) {
             location = loc;
             material = mat;
             this.data = data;
             this.nbt = nbt;
         }
 
+        /**
+         * Apply the BlockChange
+         * @return a BlockChange to revert this BlockChange
+         */
         BlockChange apply() {
             // Note what the current block state was so we can revert back to it.
             Block block = getBlock(location);
             BlockChange change;
 
-            TileEntity te = ((CraftWorld) location.getWorld()).getTileEntityAt(location.getBlockX(),
-                                                                               location.getBlockY(),
-                                                                               location.getBlockZ());
+            // Check if the block we're trying to change is a tile entity
+            TileEntity te = ((CraftWorld) location.getWorld()).getHandle()
+                    .getTileEntity(new BlockPosition(location.getBlockX(), location.getBlockY(), location.getBlockZ()));
             if (te != null) {
                 NBTTagCompound ntc = te.save(new NBTTagCompound());
                 ntc.setInt("x", location.getBlockX());
                 ntc.setInt("y", location.getBlockY());
                 ntc.setInt("z", location.getBlockZ());
-                change = new BlockChange(location, block.getType(), block.getData(), ntc);
-                te.load(new NBTTagCompound());
+                change = new BlockChange(location, block.getType(), block.getBlockData(), ntc);
+
+                // Load empty NBT data into the block, TODO is this necessary?
+                te.load(null, new NBTTagCompound());
             } else {
-                change = new BlockChange(location, block.getType(), block.getData());
+                change = new BlockChange(location, block.getType(), block.getBlockData());
             }
 
             // Apply the changes we were supposed to make.
             block.setType(material);
-            block.setBlockData(data);
+            if (data != null) {
+                block.setBlockData(data);
+            }
 
             if (nbt != null) {
-                TileEntity te2 = ((CraftWorld) location.getWorld()).getTileEntityAt(location.getBlockX(),
-                                                                                    location.getBlockY(),
-                                                                                    location.getBlockZ());
+                TileEntity te2 = ((CraftWorld) location.getWorld()).getHandle()
+                        .getTileEntity(new BlockPosition(location.getBlockX(), location.getBlockY(), location.getBlockZ()));
                 if (te2 != null) {
-                    te2.load(nbt);
+                    // First argument is unused
+                    te2.load(null, nbt);
                 }
             }
             // Return the BlockChange to be used for reverting.

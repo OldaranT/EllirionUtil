@@ -1,5 +1,6 @@
 package com.ellirion.util;
 
+import com.ellirion.util.test.RevertCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import com.ellirion.util.async.Promise;
@@ -11,6 +12,7 @@ public final class EllirionUtil extends JavaPlugin {
     public void onEnable() {
         // Plugin startup logic
         getCommand("setblocktostone").setExecutor(new SetBlockCommand());
+        getCommand("reverttransaction").setExecutor(new RevertCommand());
 
         Promise.setSyncRunner(r -> Bukkit.getScheduler().runTask(this, r));
         Promise.setAsyncRunner(r -> Bukkit.getScheduler().runTaskAsynchronously(this, r));
