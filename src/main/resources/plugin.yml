@@ -9,3 +9,6 @@ commands:
   setblocktostone:
     description: Set block to stone.
     usage: /setblocktostone
+  reverttransaction:
+    description: Revert latest transaction.
+    usage: /reverttransaction

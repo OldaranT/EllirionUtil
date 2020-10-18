@@ -1,9 +1,7 @@
 package com.ellirion.util;
 
-import net.minecraft.server.v1_12_R1.NBTTagCompound;
+import com.ellirion.util.test.RevertCommand;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.plugin.java.JavaPlugin;
 import com.ellirion.util.async.Promise;
 import com.ellirion.util.test.SetBlockCommand;
@@ -14,6 +12,7 @@ public final class EllirionUtil extends JavaPlugin {
     public void onEnable() {
         // Plugin startup logic
         getCommand("setblocktostone").setExecutor(new SetBlockCommand());
+        getCommand("reverttransaction").setExecutor(new RevertCommand());
 
         Promise.setSyncRunner(r -> Bukkit.getScheduler().runTask(this, r));
         Promise.setAsyncRunner(r -> Bukkit.getScheduler().runTaskAsynchronously(this, r));
@@ -27,14 +26,6 @@ public final class EllirionUtil extends JavaPlugin {
     public void onDisable() {
         // Plugin shutdown logic
         getLogger().info("Plugin disabled.");
-    }
-
-    /**
-     * Loads a chunk.
-     * @param loc the location of the chunk to load.
-     */
-    public void loadChunk(Location loc) {
-        WorldHelper.getBlock(loc);
     }
 
     /**
