@@ -116,11 +116,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
-<<<<<<< HEAD
             <version>1.16.3-R0.1-SNAPSHOT</version>
-=======
-            <version>1.12.2-R0.1-SNAPSHOT</version>
->>>>>>> a90bf04be33066fc913e122ff75e5cfaf38189ef
             <scope>provided</scope>
         </dependency>
         <dependency>
